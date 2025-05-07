@@ -21,7 +21,7 @@ export default function PostPlatform() {
     data.append('banner', form.banner);
 
     try {
-      await axios.post('http://localhost:5000/api/posts', data);
+      await axios.post('http://localhost:5000/api/poster', data);
       alert('Post submitted!');
     } catch (err) {
       console.error(err);

@@ -8,7 +8,7 @@ export default function PostCarousel() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/posts')
+      .get('http://localhost:5000/api/poster')
       .then((res) => setPosts(res.data));
   }, []);
 
@@ -20,7 +20,7 @@ export default function PostCarousel() {
             key={post.id}
             sx={{
               height: '100vh',
-              backgroundImage: `url(http://localhost:5000/poster/${post.banner})`,
+              backgroundImage: `url(http://localhost:5000/uploads/${post.banner})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               display: 'flex',

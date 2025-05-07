@@ -10,7 +10,6 @@ app.use(express.json());
 app.use('/poster', express.static('poster'));
 app.use('/uploads', express.static('uploads'));
 
-
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -54,7 +53,7 @@ const storageForPoster = multer.diskStorage({
 
 const uploadsForPoster = multer({ storage: storageForPoster });
 
-app.post('/api/posts', uploadsForPoster.single('banner'), (req, res) => {
+app.post('/api/poster', uploadsForPoster.single('banner'), (req, res) => {
   const { title, content } = req.body;
   const banner = req.file.filename;
 
@@ -68,7 +67,7 @@ app.post('/api/posts', uploadsForPoster.single('banner'), (req, res) => {
   );
 });
 
-app.get('/api/posts', (_, res) => {
+app.get('/api/poster', (_, res) => {
   db.query('SELECT * FROM poster ORDER BY id DESC', (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json(results);
