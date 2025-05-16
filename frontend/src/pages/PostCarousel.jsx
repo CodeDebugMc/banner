@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Box } from '@mui/material';
 import Carousel from 'react-material-ui-carousel';
@@ -8,7 +8,7 @@ export default function PostCarousel() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/poster')
+      .get('http://localhost:5000/api/posts')
       .then((res) => setPosts(res.data));
   }, []);
 

@@ -17,14 +17,45 @@ const db = mysql.createConnection({
   database: 'earist_hris',
 });
 
-const storage = multer.diskStorage({
+const storageForPoster = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'poster/'),
   filename: (req, file, cb) =>
     cb(null, Date.now() + path.extname(file.originalname)),
 });
-const upload = multer({ storage });
+const uploadForPoster = multer({ storage: storageForPoster });
 
-app.post('/api/posts', upload.single('banner'), (req, res) => {
+app.post('/api/poster', uploadForPoster.single('banner'), (req, res) => {
+  const { title, content } = req.body;
+  const banner = req.file.filename;
+
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+  db.query(
+    'INSERT INTO poster (title, content, banner) VALUES (?, ?, ?)',
+    [title, content, banner],
+    (err) => {
+      if (err) return res.status(500).json({ error: err });
+      res.status(201).json({ message: 'Post created successfully' });
+    }
+  );
+});
+
+app.get('/api/poster', (_, res) => {
+  db.query('SELECT * FROM poster ORDER BY id DESC', (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
+});
+
+const uploadsForPoster = multer({ storage });
+
+app.post('/api/posts', uploadsForPoster.single('banner'), (req, res) => {
   const { title, content } = req.body;
   const banner = req.file.filename;
 
@@ -39,35 +70,6 @@ app.post('/api/posts', upload.single('banner'), (req, res) => {
 });
 
 app.get('/api/posts', (_, res) => {
-  db.query('SELECT * FROM poster ORDER BY id DESC', (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
-  });
-});
-
-const storageForPoster = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) =>
-    cb(null, Date.now() + path.extname(file.originalname)),
-});
-
-const uploadsForPoster = multer({ storage: storageForPoster });
-
-app.post('/api/poster', uploadsForPoster.single('banner'), (req, res) => {
-  const { title, content } = req.body;
-  const banner = req.file.filename;
-
-  db.query(
-    'INSERT INTO poster (title, content, banner) VALUES (?, ?, ?)',
-    [title, content, banner],
-    (err) => {
-      if (err) return res.status(500).json({ error: err });
-      res.status(201).json({ message: 'Post created successfully' });
-    }
-  );
-});
-
-app.get('/api/poster', (_, res) => {
   db.query('SELECT * FROM poster ORDER BY id DESC', (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json(results);
